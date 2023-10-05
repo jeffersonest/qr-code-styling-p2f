@@ -18,9 +18,14 @@ export default class QRCodeStyling {
   _canvas?: QRCanvas;
   _qr?: QRCode;
   _drawingPromise?: Promise<void>;
+  _dom: Document;
 
-  constructor(options?: Partial<Options>) {
+  constructor(dom: Document, options?: Partial<Options>) {
     this._options = options ? sanitizeOptions(mergeDeep(defaultOptions, options) as RequiredOptions) : defaultOptions;
+    this._dom = dom;
+    if (this._dom) {
+      this._container = this._dom.createElement("div");
+    }
     this.update();
   }
 
@@ -41,12 +46,14 @@ export default class QRCodeStyling {
     this._qr = qrcode(this._options.qrOptions.typeNumber, this._options.qrOptions.errorCorrectionLevel);
     this._qr.addData(this._options.data, this._options.qrOptions.mode || getMode(this._options.data));
     this._qr.make();
-    this._canvas = new QRCanvas(this._options);
+    this._canvas = new QRCanvas(this._dom, this._options);
     this._drawingPromise = this._canvas.drawQR(this._qr);
     this.append(this._container);
   }
 
   append(container?: HTMLElement): void {
+    console.log(this._dom);
+
     if (!container) {
       return;
     }
@@ -60,6 +67,36 @@ export default class QRCodeStyling {
     }
 
     this._container = container;
+  }
+
+  getBase64(downloadOptions?: Partial<DownloadOptions> | string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (!this._drawingPromise) {
+        reject(new Error("Drawing promise is not available."));
+        return;
+      }
+
+      this._drawingPromise.then(() => {
+        if (!this._canvas) {
+          reject(new Error("Canvas is not initialized."));
+          return;
+        }
+
+        let extension = "png";
+
+        if (typeof downloadOptions === "string") {
+          extension = downloadOptions;
+          console.warn(
+            "Extension is deprecated as argument for 'getBase64' method, please pass object { extension: '...' } as argument"
+          );
+        } else if (typeof downloadOptions === "object" && downloadOptions !== null && downloadOptions.extension) {
+          extension = downloadOptions.extension;
+        }
+
+        const data = this._canvas.getCanvas().toDataURL(`image/${extension}`);
+        resolve(data);
+      });
+    });
   }
 
   download(downloadOptions?: Partial<DownloadOptions> | string): void {
@@ -87,7 +124,7 @@ export default class QRCodeStyling {
       }
 
       const data = this._canvas.getCanvas().toDataURL(`image/${extension}`);
-      downloadURI(data, `${name}.${extension}`);
+      downloadURI(this._dom, data, `${name}.${extension}`);
     });
   }
 }

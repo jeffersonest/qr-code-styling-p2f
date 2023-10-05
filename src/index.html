@@ -1,41 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>QR Code Styling</title>
-    </head>
-    <body>
-        <div id="canvas"></div>
-        <script type="text/javascript">
+<head>
+    <meta charset="UTF-8">
+    <div id="canvas"></div>
+    <title>QR Code Styling</title>
+</head>
+<body>
 
-          const qrCode = new QRCodeStyling({
-            width: 500,
-            height: 500,
-            data: "h",
-            image: "https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg",
-            dotsOptions: {
-              type: "rounded"
-            },
-            cornersSquareOptions: {
-              gradient: {
-                type: "linear",
-                rotation: Math.PI * 0.2,
-                colorStops: [{
-                  offset: 0,
-                  color: 'blue'
-                }, {
-                  offset: 1,
-                  color: 'red'
-                }]
-              },
+<script type="text/javascript">
+
+    const baseColor = "#000e4f";
+
+    const qrCode = new QRCodeStyling(document,
+        {
+            width: 300,
+            height: 300,
+            // data: "00020126710014BR.GOV.BCB.PIX0136563134aa-9146-4c93-a032-4d6513de606e0209teste pix5204000053039865802BR5925JEFFERSON ESTEVAM DA SILV6009SAO PAULO61080540900062240520q3Zz0z7zTDx30Md3d56k6304D459",
+            data: "00020101021226990014br.gov.bcb.pix2577pix.bancogenial.com/qrs1/v2/01R1hpuvCUtW8ec9P4LW4xgsn2KngbkNINV7Ff7DenQm79eVJ52040000530398654040.015802BR5908Pay2Free6014Belo Horizonte62070503***63043ED1",
+            margin: 0,
+            qrOptions: {
+                typeNumber: "0",
+                mode: "Byte",
+                errorCorrectionLevel: "M"
             },
             imageOptions: {
-              crossOrigin: "anonymous",
-              margin: 30
+                hideBackgroundDots: true,
+                imageSize: 1,
+                margin: 0
+            },
+            dotsOptions: {
+                type: "dots",
+                color: "#6a1a4c",
+                gradient: {
+                    type: "linear",
+                    rotation: 0.2617993877991494,
+                    colorStops: [
+                        {
+                            offset: 0,
+                            color: baseColor,
+                        },
+                        {
+                            offset: 1,
+                            color: baseColor,
+                        }
+                    ]
+                }
+            },
+            backgroundOptions: {
+                color: "#ffffff"
+            },
+            image: "https://pay2free-qr-code-test.s3.amazonaws.com/estrelabet-logo.png",
+            dotsOptionsHelper: {
+                colorType: {
+                    single: false,
+                    gradient: true
+                },
+                gradient: {
+                    linear: true,
+                    radial: false,
+                    color1: baseColor,
+                    color2: baseColor,
+                    rotation: "0"
+                }
+            },
+            cornersSquareOptions: {
+                type: "dot",
+                color: baseColor,
+            },
+            cornersSquareOptionsHelper: {
+                colorType: {
+                    single: true,
+                    gradient: false
+                },
+                gradient: {
+                    linear: true,
+                    radial: false,
+                    color1: "#000000",
+                    color2: "#000000",
+                    rotation: "0"
+                }
+            },
+            cornersDotOptions: {
+                type: "dot",
+                color: "#004080",
+                gradient: null
+            },
+            cornersDotOptionsHelper: {
+                colorType: {
+                    single: true,
+                    gradient: false
+                },
+                gradient: {
+                    linear: true,
+                    radial: false,
+                    color1: "#000000",
+                    color2: "#000000",
+                    rotation: "0"
+                }
+            },
+            backgroundOptionsHelper: {
+                colorType: {
+                    single: true,
+                    gradient: false
+                },
+                gradient: {
+                    linear: true,
+                    radial: false,
+                    color1: "#ffffff",
+                    color2: "#ffffff",
+                    rotation: "0"
+                }
             }
-          });
+        });
 
-          qrCode.append(document.getElementById("canvas"));
-        </script>
-    </body>
+
+    qrCode.append(document.getElementById("canvas"));
+
+    console.log(qrCode._canvas.getCanvas().toDataURL(`image/png`));
+</script>
+</body>
 </html>

@@ -1,8 +1,8 @@
-export default function downloadURI(uri: string, name: string): void {
-  const link = document.createElement("a");
+export default function downloadURI(dom: Document, uri: string, name: string): void {
+  const link = dom.createElement("a");
   link.download = name;
   link.href = uri;
-  document.body.appendChild(link);
+  dom.body.appendChild(link);
   link.click();
-  document.body.removeChild(link);
+  dom.body.removeChild(link);
 }

@@ -36,8 +36,8 @@ export default class QRCanvas {
   _image?: HTMLImageElement;
 
   //TODO don't pass all options to this class
-  constructor(options: RequiredOptions) {
-    this._canvas = document.createElement("canvas");
+  constructor(dom: Document, options: RequiredOptions) {
+    this._canvas = dom.createElement("canvas");
     this._canvas.width = options.width;
     this._canvas.height = options.height;
     this._options = options;
@@ -359,7 +359,11 @@ export default class QRCanvas {
   loadImage(): Promise<void> {
     return new Promise((resolve, reject) => {
       const options = this._options;
-      const image = new Image();
+
+      // Verificar se global.Image está definido, caso contrário, use o Image padrão
+      const ImageConstructor = typeof global.Image !== "undefined" ? global.Image : Image;
+
+      const image = new ImageConstructor();
 
       if (!options.image) {
         return reject("Image is not defined");
